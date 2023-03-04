@@ -30,7 +30,7 @@ Resources:
           FromPort: 3306
           ToPort: 3306
           CidrIp: '0.0.0.0/0'
-  MyDBInstance:
+  MyDBInstance:     #AMAZON RDS
     Type: 'AWS::RDS::DBInstance'
     Properties:
       Engine: 'mysql'
@@ -41,6 +41,7 @@ Resources:
       MasterUserPassword: 'mypassword'
       VPCSecurityGroups:
         - !Ref MySecurityGroup
+#4 INSTANCIAS
    MyEC2Instance1:
     Type: 'AWS::EC2::Instance'
     Properties:
@@ -69,7 +70,7 @@ Resources:
         LaunchTemplateName: !Ref MyLaunchTemplate
       SecurityGroupIds:
         - !Ref MySecurityGroup
-  MyALB:
+  MyALB:    #LOAD BALANCER
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Properties:
       Name: 'my-alb'
