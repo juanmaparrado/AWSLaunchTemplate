@@ -53,13 +53,14 @@ Resources:
         - !Ref Subnet2
         - !Ref Subnet3
 
-  DBSecurityGroup:
+  MyDBSecurityGroup:
     Type: 'AWS::RDS::DBSecurityGroup'
     Properties:
       GroupDescription: 'Allow access to the database from EC2 instances'
       DBSecurityGroupIngress:
         - EC2SecurityGroupId: !GetAtt EC2SecurityGroup.GroupId
           EC2SecurityGroupOwnerId: !Ref AWS::AccountId
+        - CIDRIP: 0.0.0.0/0
 
 
   EC2Instance:
@@ -87,7 +88,7 @@ Resources:
       MasterUserPassword: 'mypassword'
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
-        - !Ref DBSecurityGroup
+        - !Ref MyDBSecurityGroup
       AllocatedStorage: 20
 
 Outputs:
