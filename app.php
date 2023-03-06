@@ -1,33 +1,21 @@
 <?php
 // Conexión a la base de datos
-$host = 'mydbinstance.c8qjvj6nk1kd.us-east-1.rds.amazonaws.com';
-$port = 3306;
-$dbname = 'mydatabase';
-$user = 'admin';
+$host = 'mydb.xxxxxxxxxxx.us-west-2.rds.amazonaws.com';
+$dbname = 'my-db-instance';
+$username = 'myuser';
 $password = 'mypassword';
 
-$conn = new mysqli($host, $user, $password, $dbname, $port);
-
-if ($conn->connect_error) {
-    die('Error de conexión: ' . $conn->connect_error);
-}
-
-// Consulta a la base de datos
-$sql = 'SELECT * FROM mytable';
-
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // Mostrar los resultados
-    while ($row = $result->fetch_assoc()) {
-        echo 'ID: ' . $row['id'] . '<br>';
-        echo 'Nombre: ' . $row['nombre'] . '<br>';
-        echo 'Correo electrónico: ' . $row['correo'] . '<br>';
-        echo '<br>';
+try {
+    $dbh = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+    // Consulta para obtener algunos datos de la tabla 'mytable'
+    $stmt = $dbh->prepare("SELECT name, email FROM mytable");
+    $stmt->execute();
+    // Imprimir los resultados
+    while ($row = $stmt->fetch()) {
+        echo $row['name'] . " - " . $row['email'] . "<br/>";
     }
-} else {
-    echo 'No se encontraron resultados.';
+} catch (PDOException $e) {
+    echo "Error: " . $e->getMessage();
+    die();
 }
-
-$conn->close();
 ?>
