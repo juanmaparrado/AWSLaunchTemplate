@@ -1,9 +1,8 @@
-AWSTemplateFormatVersion: 2010-09-09
 Resources:
   EC2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: Allow HTTP, SSH, and MySQL traffic
+      GroupDescription: 'My security group description'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -18,7 +17,7 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
 
-   VPC:
+  VPC:
     Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: '10.0.0.0/16'
@@ -47,8 +46,8 @@ Resources:
   DBSubnetGroup:
     Type: 'AWS::RDS::DBSubnetGroup'
     Properties:
-      DBSubnetGroupName: my-db-subnet-group
-      DBSubnetGroupDescription: my-db-subnet-group-description
+      DBSubnetGroupName: 'my-db-subnet-group'
+      DBSubnetGroupDescription: 'my-db-subnet-group-description'
       SubnetIds:
         - !Ref Subnet1
         - !Ref Subnet2
@@ -57,10 +56,11 @@ Resources:
   DBSecurityGroup:
     Type: 'AWS::RDS::DBSecurityGroup'
     Properties:
-      DBSecurityGroupName: my-db-security-group
+      GroupDescription: 'Allow access to the database from EC2 instances'
       DBSecurityGroupIngress:
-        - EC2SecurityGroupName: !Ref EC2SecurityGroup
+        - EC2SecurityGroupId: !GetAtt EC2SecurityGroup.GroupId
           EC2SecurityGroupOwnerId: !Ref AWS::AccountId
+
 
   EC2Instance:
     Type: 'AWS::EC2::Instance'
@@ -83,8 +83,8 @@ Resources:
       DBInstanceClass: db.t2.micro
       Engine: mysql
       EngineVersion: '5.7'
-      MasterUsername: myuser
-      MasterUserPassword: mypassword
+      MasterUsername: 'myuser'
+      MasterUserPassword: 'mypassword'
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
         - !Ref DBSecurityGroup
