@@ -88,6 +88,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
         - !Ref DBSecurityGroup
+      AllocatedStorage: 20
 
 Outputs:
   DBEndpoint:
