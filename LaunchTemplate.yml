@@ -1,18 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Resources:
-  EC2Instance:
-    Type: 'AWS::EC2::Instance'
-    Properties:
-      ImageId: 'ami-0557a15b87f6559cf'
-      InstanceType: 't2.micro'
-      KeyName: 'DeployCloudFormation'
-      SecurityGroupIds:
-        - !Ref EC2SecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Hello, World! This is my EC2 instance."
-  EC2SecurityGroup:       
+  EC2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: Allow HTTP, SSH, and MySQL traffic
@@ -28,18 +16,68 @@ Resources:
         - IpProtocol: tcp
           FromPort: 3306
           ToPort: 3306
-          SourceSecurityGroupId: !Ref EC2SecurityGroup
+          CidrIp: 0.0.0.0/0
+
+   VPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: '10.0.0.0/16'
+
+  Subnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: us-east-1a
+      CidrBlock: '10.0.1.0/24'
+      VpcId: !Ref VPC
+
+  Subnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: us-east-1b
+      CidrBlock: '10.0.2.0/24'
+      VpcId: !Ref VPC
+
+  Subnet3:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      AvailabilityZone: us-east-1c
+      CidrBlock: '10.0.3.0/24'
+      VpcId: !Ref VPC
 
   DBSubnetGroup:
     Type: 'AWS::RDS::DBSubnetGroup'
     Properties:
       DBSubnetGroupName: my-db-subnet-group
+      DBSubnetGroupDescription: my-db-subnet-group-description
       SubnetIds:
-        - subnet-0123456789abcdef0
-        - subnet-0123456789abcdef1
-        - subnet-0123456789abcdef2
+        - !Ref Subnet1
+        - !Ref Subnet2
+        - !Ref Subnet3
+
+  DBSecurityGroup:
+    Type: 'AWS::RDS::DBSecurityGroup'
+    Properties:
+      DBSecurityGroupName: my-db-security-group
+      DBSecurityGroupIngress:
+        - EC2SecurityGroupName: !Ref EC2SecurityGroup
+          EC2SecurityGroupOwnerId: !Ref AWS::AccountId
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: 'ami-0557a15b87f6559cf'
+      InstanceType: 't2.micro'
+      KeyName: 'DeployCloudFormation'
+      SecurityGroupIds:
+        - !Ref EC2SecurityGroup
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo "Hello, World! This is my EC2 instance."
+
   DBInstance:
     Type: 'AWS::RDS::DBInstance'
+    DependsOn: [DBSecurityGroup, DBSubnetGroup]
     Properties:
       DBInstanceIdentifier: my-db-instance
       DBInstanceClass: db.t2.micro
@@ -50,13 +88,7 @@ Resources:
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
         - !Ref DBSecurityGroup
-  DBSecurityGroup:
-    Type: 'AWS::RDS::DBSecurityGroup'
-    Properties:
-      DBSecurityGroupName: my-db-security-group
-      DBSecurityGroupIngress:
-        - EC2SecurityGroupName: !Ref EC2SecurityGroup
-          EC2SecurityGroupOwnerId: !Ref AWS::AccountId
+
 Outputs:
   DBEndpoint:
     Value: !GetAtt DBInstance.Endpoint.Address
