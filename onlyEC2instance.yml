@@ -43,24 +43,6 @@ Resources:
       CidrBlock: '10.0.3.0/24'
       VpcId: !Ref VPC
 
-  DBSubnetGroup:
-    Type: 'AWS::RDS::DBSubnetGroup'
-    Properties:
-      DBSubnetGroupName: 'my-db-subnet-group'
-      DBSubnetGroupDescription: 'my-db-subnet-group-description'
-      SubnetIds:
-        - !Ref Subnet1
-        - !Ref Subnet2
-        - !Ref Subnet3
-
-  DBSecurityGroup:
-    Type: 'AWS::RDS::DBSecurityGroup'
-    Properties:
-      GroupDescription: 'Allow access to the database from EC2 instances'
-      DBSecurityGroupIngress:
-        - EC2SecurityGroupId: !GetAtt EC2SecurityGroup.GroupId
-          EC2SecurityGroupOwnerId: !Ref AWS::AccountId
-
   EC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
@@ -73,24 +55,10 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "Hello, World! This is my EC2 instance."
+      Count: 4
 
-  DBInstance:
-    Type: 'AWS::RDS::DBInstance'
-    DependsOn: [DBSecurityGroup, DBSubnetGroup]
-    Properties:
-      DBInstanceIdentifier: my-db-instance
-      DBInstanceClass: db.t2.micro
-      Engine: mysql
-      EngineVersion: '5.7'
-      MasterUsername: 'myuser'
-      MasterUserPassword: 'mypassword'
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      VPCSecurityGroupNames:
-        - !Ref DBSecurityGroup
-      AllocatedStorage: 20
 Outputs:
-  DBEndpoint:
-    Value: !GetAtt DBInstance.Endpoint.Address
-
-
-
+  EC2InstanceId:
+    Value: !Ref EC2Instance
+  EC2InstancePublicDns:
+    Value: !GetAtt EC2Instance.PublicDnsName
