@@ -1,9 +1,9 @@
 <?php
 // Conexión a la base de datos
 $host = 'testnew-mydbinstance-gppjc9ri2gnw.cgu0ljnmanau.us-east-1.rds.amazonaws.com';
-$dbname = 'my-db-instance';
-$username = 'myuser';
-$password = 'mypassword';
+$dbname = 'template';
+$username = 'username';
+$password = 'MyPassword';
 
 try {
     $dbh = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

@@ -56,5 +56,23 @@ Resources:
       VPCSecurityGroups:
         - !Ref MyDBSecurityGroup
 
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: 'MyLoadBalancer'
+      Scheme: 'internet-facing'
+      Subnets:
+        - 'subnet-0f7b876e4123f20b9'
+        - 'subnet-053684d82ebdefc80'
+        - 'subnet-0818c93680aadad75'
+        - 'subnet-075bcada978dfd37d'
+        - 'subnet-0015ecc0eb404fbbe'
+        - 'subnet-00628eb48be7ec815'
+      SecurityGroups:
+        - !Ref EC2SecurityGroup
+      Tags:
+        - Key: 'Name'
+          Value: 'MyLoadBalancer'
+
 
 
