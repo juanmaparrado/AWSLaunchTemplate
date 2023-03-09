@@ -2,7 +2,7 @@ Resources:
   EC2SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      GroupDescription: 'My security group description'
+      GroupDescription: 'My security group description allow traffic http https mysql ssh'
       VpcId: 'vpc-03f8e17b5ff23e9ed'
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -17,6 +17,10 @@ Resources:
           FromPort: 3306
           ToPort: 3306
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
 
   EC2Instance:
     Type: 'AWS::EC2::Instance'
@@ -28,9 +32,8 @@ Resources:
         - !Ref EC2SecurityGroup
       UserData:
         Fn::Base64: !Sub |
-          #!/bin/bash
-          echo "Hello, World! This is my EC2 instance."
-
+        #!/bin/bash
+        
   MyDBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     DependsOn: EC2SecurityGroup
