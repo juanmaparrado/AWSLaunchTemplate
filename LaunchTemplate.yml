@@ -30,7 +30,6 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "Hello, World! This is my EC2 instance."
-      InstanceCount: 4
 
   MyDBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
