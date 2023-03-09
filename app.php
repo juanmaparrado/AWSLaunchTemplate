@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-$host = 'mydb.xxxxxxxxxxx.us-west-2.rds.amazonaws.com';
+$host = 'testnew-mydbinstance-gppjc9ri2gnw.cgu0ljnmanau.us-east-1.rds.amazonaws.com';
 $dbname = 'my-db-instance';
 $username = 'myuser';
 $password = 'mypassword';

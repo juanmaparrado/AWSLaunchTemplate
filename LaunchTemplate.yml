@@ -3,6 +3,7 @@ Resources:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       GroupDescription: 'My security group description'
+      VpcId: 'vpc-03f8e17b5ff23e9ed'
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -17,50 +18,6 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
 
-  VPC:
-    Type: 'AWS::EC2::VPC'
-    Properties:
-      CidrBlock: '10.0.0.0/16'
-
-  Subnet1:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      AvailabilityZone: us-east-1a
-      CidrBlock: '10.0.1.0/24'
-      VpcId: !Ref VPC
-
-  Subnet2:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      AvailabilityZone: us-east-1b
-      CidrBlock: '10.0.2.0/24'
-      VpcId: !Ref VPC
-
-  Subnet3:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      AvailabilityZone: us-east-1c
-      CidrBlock: '10.0.3.0/24'
-      VpcId: !Ref VPC
-
-  DBSubnetGroup:
-    Type: 'AWS::RDS::DBSubnetGroup'
-    Properties:
-      DBSubnetGroupName: 'my-db-subnet-group'
-      DBSubnetGroupDescription: 'my-db-subnet-group-description'
-      SubnetIds:
-        - !Ref Subnet1
-        - !Ref Subnet2
-        - !Ref Subnet3
-
-  DBSecurityGroup:
-    Type: 'AWS::RDS::DBSecurityGroup'
-    Properties:
-      GroupDescription: 'Allow access to the database from EC2 instances'
-      DBSecurityGroupIngress:
-        - EC2SecurityGroupId: !GetAtt EC2SecurityGroup.GroupId
-          EC2SecurityGroupOwnerId: !Ref AWS::AccountId
-
   EC2Instance:
     Type: 'AWS::EC2::Instance'
     Properties:
@@ -73,24 +30,31 @@ Resources:
         Fn::Base64: !Sub |
           #!/bin/bash
           echo "Hello, World! This is my EC2 instance."
+      InstanceCount: 4
 
-  DBInstance:
-    Type: 'AWS::RDS::DBInstance'
-    DependsOn: [DBSecurityGroup, DBSubnetGroup]
+  MyDBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn: EC2SecurityGroup
     Properties:
-      DBInstanceIdentifier: my-db-instance
-      DBInstanceClass: db.t2.micro
+      GroupDescription: Security group for RDS instance
+      VpcId: 'vpc-03f8e17b5ff23e9ed'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          SourceSecurityGroupId: !Ref EC2SecurityGroup
+
+  MyDBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
       Engine: mysql
-      EngineVersion: '5.7'
-      MasterUsername: 'myuser'
-      MasterUserPassword: 'mypassword'
-      DBSubnetGroupName: !Ref DBSubnetGroup
-      VPCSecurityGroupNames:
-        - !Ref DBSecurityGroup
+      DBInstanceClass: db.t2.micro
+      MasterUsername: username
+      MasterUserPassword: MyPassword
+      DBName: template
       AllocatedStorage: 20
-Outputs:
-  DBEndpoint:
-    Value: !GetAtt DBInstance.Endpoint.Address
+      VPCSecurityGroups:
+        - !Ref MyDBSecurityGroup
 
 
 
