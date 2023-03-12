@@ -1,6 +1,6 @@
 <?php
 // Conexión a la base de datos
-$host = 'deployrecuperacion1-mydbinstance-zysxrlomc084.cgu0ljnmanau.us-east-1.rds.amazonaws.com';
+$host = 'deploywithtemplatelaunch-mydbinstance-e0l2shx56fuz.cgu0ljnmanau.us-east-1.rds.amazonaws.com';
 $dbname = 'template';
 $username = 'username';
 $password = 'MyPassword';

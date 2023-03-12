@@ -23,14 +23,11 @@ Resources:
     Properties:
       LaunchTemplateName: MyLaunchTemplate
       LaunchTemplateData:
-        IamInstanceProfile:
-          Name: IAMProfile
         ImageId: 'ami-0557a15b87f6559cf'
         InstanceType: 't2.micro'
         KeyName: 'DeployCloudFormation'
         SecurityGroupIds:
           - !Ref EC2SecurityGroup
-          - !Ref MyDBSecurityGroup
 
   EC2Instance1:
     Type: 'AWS::EC2::Instance'
