@@ -23,6 +23,7 @@ sudo nano index.php
 En este archivo volcamos nuestro archivo index.php o simplemente lo compartimos mediante ssh
 
 sudo systemctl restart apache2
+
 Si accedemos a la direcion dns publica veremos el dato que hemos guardado
 
 EL CODIGO PHP ES BASTANTE SIMPLE 
