@@ -18,17 +18,67 @@ Resources:
           ToPort: 3306
           CidrIp: 0.0.0.0/0
 
-  EC2Instance:
-    Type: 'AWS::EC2::Instance'
+  MyLaunchTemplate:
+    Type: "AWS::EC2::LaunchTemplate"
     Properties:
-      ImageId: 'ami-0557a15b87f6559cf'
-      InstanceType: 't2.micro'
-      KeyName: 'DeployCloudFormation'
-      SecurityGroupIds:
-        - !Ref EC2SecurityGroup
+      LaunchTemplateName: MyLaunchTemplate
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Name: IAMProfile
+        ImageId: 'ami-0557a15b87f6559cf'
+        InstanceType: 't2.micro'
+        KeyName: 'DeployCloudFormation'
+        SecurityGroupIds:
+          - !Ref EC2SecurityGroup
+          - !Ref MyDBSecurityGroup
+
+  EC2Instance1:
+    Type: 'AWS::EC2::Instance'
+    DependsOn:
+      - MyLaunchTemplate
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
       UserData:
         Fn::Base64: !Sub |
-        #!/bin/bash
+          #!/bin/bash
+
+  EC2Instance2:
+    Type: 'AWS::EC2::Instance'
+    DependsOn:
+      - MyLaunchTemplate
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+
+  EC2Instance3:
+    Type: 'AWS::EC2::Instance'
+    DependsOn:
+      - MyLaunchTemplate
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+
+  EC2Instance4:
+    Type: 'AWS::EC2::Instance'
+    DependsOn:
+      - MyLaunchTemplate
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref MyLaunchTemplate
+        Version: !GetAtt MyLaunchTemplate.LatestVersionNumber
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
         
   MyDBSecurityGroup:
     Type: AWS::EC2::SecurityGroup

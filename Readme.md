@@ -27,7 +27,7 @@ sudo systemctl restart apache2
 Si accedemos a la direcion dns publica veremos el dato que hemos guardado
 
 EL CODIGO PHP ES BASTANTE SIMPLE 
-Declaro variables con los datos del endpoint de la RDS DB, nombre de la base de datos, usuario y contraseña.
+Declaro variables con los datos del endpoint de la RDS DB que se ha creado con nuestra plantilla de despliegue, nombre de la base de datos, usuario y contraseña.
 
 Realizo la conexion a la misma con PDO 
 Luego ejecuto una consulta que crea una base de datos.
